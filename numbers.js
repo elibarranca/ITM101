@@ -1,3 +1,8 @@
+// hello.js
+console.log("Hello, world!");
+cd path/to/your/file
+node hello.js
+
 // add.js
 
 // Get the arguments (skip first two: "node" and filename)
@@ -16,3 +21,23 @@ if (isNaN(num1) || isNaN(num2)) {
 const sum = num1 + num2;
 
 console.log(`${num1} + ${num2} = ${sum}`);
+
+// divide.js
+function divideNumbers(a, b) {
+  if (typeof a !== "number" || typeof b !== "number") {
+    console.log("Both arguments must be numbers.");
+    return;
+  }
+
+  if (b === 0) {
+    console.log("Cannot divide by zero.");
+    return;
+  }
+
+  return a / b;
+}
+
+// Examples:
+console.log(divideNumbers(10, 2));   // 5
+console.log(divideNumbers(10, 0));   // Cannot divide by zero.
+console.log(divideNumbers("x", 2));  // Both arguments must be numbers.
