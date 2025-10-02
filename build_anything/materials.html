@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tools & Materials Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="site">
+    <a href="index.html" style="display:inline-block;margin-bottom:12px;color:var(--muted);text-decoration:none;">← Back</a>
+
+    <h2 style="color:var(--primary);margin-bottom:8px;">🧰 Tools & Materials Generator</h2>
+    <p class="lead">Pick a project to see a list of materials and tools required.</p>
+
+    <div class="container" style="margin-top:12px;">
+      <div class="form-row">
+        <label class="label" for="projectSel">Project</label>
+        <select id="projectSel" class="input">
+          <option value="">-- Choose a project --</option>
+          <option value="shelf">Shelf</option>
+          <option value="shed">Shed</option>
+          <option value="fence">Fence</option>
+        </select>
+      </div>
+
+      <div style="margin-top:10px;">
+        <button class="btn" id="generateMaterials">Generate</button>
+      </div>
+
+      <div id="output" class="container hidden" style="margin-top:12px;">
+        <h3 id="title"></h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+          <div>
+            <h4 style="margin:0 0 8px 0;color:var(--primary)">Materials</h4>
+            <ul id="materialsList"></ul>
+          </div>
+          <div>
+            <h4 style="margin:0 0 8px 0;color:var(--primary)">Tools</h4>
+            <ul id="toolsList"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const materialsAndTools = {
+      shelf: {
+        materials: ["Shelf board", "Wall anchors", "Screws"],
+        tools: ["Drill", "Screwdriver", "Measuring tape", "Level"]
+      },
+      shed: {
+        materials: [
+          "Wood planks",
+          "Concrete or wood foundation",
+          "Roofing material",
+          "Siding",
+          "Nails & screws"
+        ],
+        tools: ["Hammer", "Saw", "Drill", "Measuring tape", "Level", "Ladder"]
+      },
+      fence: {
+        materials: ["Fence posts", "Wooden panels or planks", "Concrete mix", "Nails & screws"],
+        tools: ["Shovel", "Hammer", "Drill", "Measuring tape", "Level", "Post hole digger"]
+      }
+    };
+
+    const btn = document.getElementById('generateMaterials');
+    btn.addEventListener('click', () => {
+      const sel = document.getElementById('projectSel').value;
+      const output = document.getElementById('output');
+      const title = document.getElementById('title');
+      const matList = document.getElementById('materialsList');
+      const toolList = document.getElementById('toolsList');
+
+      if(!sel){
+        alert('Please select a project!');
+        return;
+      }
+
+      const data = materialsAndTools[sel];
+      title.textContent = `Materials & Tools for building a ${sel}`;
+      matList.innerHTML = '';
+      toolList.innerHTML = '';
+
+      data.materials.forEach(m => {
+        const li = document.createElement('li'); li.textContent = m; matList.appendChild(li);
+      });
+      data.tools.forEach(t => {
+        const li = document.createElement('li'); li.textContent = t; toolList.appendChild(li);
+      });
+
+      output.classList.remove('hidden');
+      output.scrollIntoView({behavior:'smooth'});
+    });
+  })();
+</script>
+</body>
+</html>
