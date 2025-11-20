@@ -5,33 +5,159 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Learn to Build Anything — Home</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="project.js" defer></script> </script>
 </head>
 <body>
   <div class="site">
+    <!-- Header remains constant across all views -->
     <header class="site-header">
-      <h1>🔨 Learn to Build Anything</h1>
-      <p class="lead">A simple beginner-friendly site. Click a tool to open it.</p>
+      <h1 onclick="navigateTo('home')" style="cursor: pointer;">🔨 Learn to Build Anything</h1>
+      <div id="login-logout">
+        <a href="#" id="loginBtn" class="login-btn">Login</a>
+      </div>
     </header>
 
-    <main class="cards">
-      <a class="card" href="build-filter.html">
-        <h2>🪚 Project Configurator (Build Filter)</h2>
-        <p>Pick wood, dimensions and get a generated filter line you can copy.</p>
-      </a>
+    <div class="site-content">
+      <!-- Status Box for global messages -->
+      <div id="statusBox" class="error-box hidden" style="text-align: left; margin-top: 20px;">
+        <span id="statusText"></span>
+      </div>
 
-      <a class="card" href="materials.html">
-        <h2>🧰 Tools & Materials Generator</h2>
-        <p>Select a project (shelf / shed / fence) to see required materials & tools.</p>
-      </a>
+      <!-- VIEW 1: HOME PAGE (index.html content) -->
+      <div id="homeView" class="view">
+        <div class="hero">
+          <div class="hero-content">
+            <h1>Craft Your Legacy</h1>
+            <p class="lead">From rustic furniture to essential tools, your woodworking journey begins here. Welcome to the workshop.</p>
+          </div>
+        </div>
+        <main class="cards">
+          <a class="card" href="#" onclick="navigateTo('configurator'); return false;">
+            <h2>🪚 Start a New Project</h2>
+            <p>Define your project's type (shelf, stool, etc.), wood species, and dimensions to generate a unique project plan.</p>
+          </a>
+          <a class="card" href="#" id="viewMaterialsLink" onclick="return checkProject(event, 'materials')">
+            <h2>🧰 View Materials List</h2>
+            <p>Access the detailed lumber, hardware, and tool list required for your last (or current) project.</p>
+          </a>
+          <a class="card" href="#" id="viewInstructionsLink" onclick="return checkProject(event, 'instructions')">
+            <h2>📋 Get Instructions</h2>
+            <p>Retrieve the comprehensive, step-by-step construction guide based on your exact project specifications.</p>
+          </a>
+        </main>
+      </div>
 
-      <a class="card" href="project-instructions.html">
-        <h2>📋 Project Instructions</h2>
-        <p>Get step-by-step construction guides. Optional: paste a YouTube API key to fetch video tutorials.</p>
-      </a>
-    </main>
+      <!-- VIEW 2: PROJECT CONFIGURATOR (build-filter.html content) -->
+      <div id="configuratorView" class="view hidden">
+        <a href="#" onclick="navigateTo('home'); return false;" class="back-link">← Back</a>
+        <div class="tool-header">
+          <h2>🪚 Start a New Project</h2>
+          <p class="lead">Define your project to generate the materials list and instructions.</p>
+        </div>
+        <div class="container" style="margin-top:12px;">
+          <form id="builderForm">
+            <div class="form-row">
+              <label class="label" for="projectType">Project Type</label>
+              <select id="projectType" required>
+                <option value="">Select project type</option>
+                <option value="stool">Small Stool (e.g., 18in tall)</option>
+                <option value="shelf">Floating Shelf (e.g., 36in wide)</option>
+                <option value="workbench">Small Workbench</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="label" for="woodType">Wood Type</label>
+              <select id="woodType" required>
+                <option value="">Select a wood type</option>
+                <option value="pine">Pine (Soft, economical)</option>
+                <option value="oak">Oak (Hard, durable)</option>
+                <option value="cedar">Cedar (Weather-resistant)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="label" for="screwLength">Fastener Length (Inches)</label>
+              <input type="number" id="screwLength" min="1" max="4" step="0.5" placeholder="e.g., 2.5" required>
+            </div>
+            <div class="form-row">
+              <label class="label" for="height">Height (in inches)</label>
+              <input type="number" id="height" min="1" placeholder="e.g., 18" required>
+            </div>
+            <div class="form-row">
+              <label class="label" for="width">Width (in inches)</label>
+              <input type="number" id="width" min="1" placeholder="e.g., 36" required>
+            </div>
+            <div class="form-row">
+              <label class="label" for="depth">Depth (in inches)</label>
+              <input type="number" id="depth" min="1" placeholder="e.g., 12" required>
+            </div>
+            <button type="submit" class="btn-primary">Save Project & Get Materials</button>
+          </form>
+        </div>
+      </div>
 
-    <footer class="footer">
-      <small>Files are static HTML/CSS/JS. If you want YouTube video fetch to work reliably, serve files over http (see note).</small>
+      <!-- VIEW 3: MATERIALS LIST (materials.html content) -->
+      <div id="materialsView" class="view hidden">
+        <a href="#" onclick="navigateTo('home'); return false;" class="back-link">← Back to Home</a>
+        <div class="tool-header">
+          <h2>🧰 Tools & Materials Generator</h2>
+          <p class="lead">Materials and cut list for your custom project, powered by AI planning.</p>
+        </div>
+        <div class="container" style="margin-top:12px;">
+          <h3 id="materialsProjectTitle">Loading Project Details...</h3>
+          <div id="materialsLoading" class="loading-spinner"></div>
+          <div id="materialsOutput" class="instructions-section hidden">
+            <div id="materialsList">
+              <h4>Materials & Cut List</h4>
+              <ul id="materialsUl">
+                <!-- Dynamic list generated by the API mock will be injected here -->
+              </ul>
+            </div>
+            <div id="toolsList" style="margin-top: 20px;">
+              <h4>Tools Required</h4>
+              <ul id="toolsUl">
+                <!-- Basic list of tools -->
+              </ul>
+            </div>
+            <!-- FIX: Added ID and removed inline onclick for dynamic attachment in JS -->
+            <button id="materialsToInstructionsBtn" class="btn-primary">Go to Instructions</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 4: INSTRUCTIONS (project-instructions.html content) -->
+      <div id="instructionsView" class="view hidden">
+        <a href="#" onclick="navigateTo('home'); return false;" class="back-link">← Back to Home</a>
+        <div class="tool-header">
+          <h2>📋 Project Instructions</h2>
+          <p class="lead">Step-by-step construction guide for your custom build.</p>
+        </div>
+        <div class="container" style="margin-top:12px;">
+          <h3 id="instructionsProjectTitle">Loading Project Details...</h3>
+          <div id="instructionsLoading" class="loading-spinner"></div>
+          <div id="instructionsResults" class="hidden">
+            <div id="guideSection" class="instructions-section">
+              <h3>🔨 Construction Steps</h3>
+              <ol id="guideSteps">
+                <!-- Steps generated by API mock will be inserted here -->
+              </ol>
+            </div>
+          </div>
+          <!-- FIX: Added ID for consistent button handling in JS -->
+          <button id="instructionsToHomeBtn" class="btn-primary">Start New Project</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer remains constant across all views -->
+    <footer class="site-footer">
+      <div class="social-links">
+        <a href="https://twitter.com" aria-label="Twitter">🐦</a>
+        <a href="https://instagram.com" aria-label="Instagram">📸</a>
+        <a href="https://youtube.com" aria-label="YouTube">▶️</a>
+      </div>
+      <div style="margin-top: 10px;">
+        <small>© 2024 Build Co. All rights reserved.</small>
+      </div>
     </footer>
   </div>
 </body>
